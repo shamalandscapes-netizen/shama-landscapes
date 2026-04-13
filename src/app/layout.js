@@ -21,7 +21,7 @@ const montserrat = Montserrat({
 
 const siteConfig = {
   name: "Shama Landscape Architects",
-  url: "https://shamalandscapes.com",
+  url: "https://shamalandscapes.co.ke",
   logo: "/assets/shama_landscape_logo.png",
   description:
     "Shama Landscape Architects blends design, sustainability, and innovation to create timeless outdoor spaces. Based in Kakamega, Kenya — we bring landscapes to life through creative vision and ecological harmony.",

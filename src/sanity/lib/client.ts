@@ -6,7 +6,8 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: true,
+  useCdn: false,
+  perspective: 'published',
 })
 
 // Client for write operations (used in API routes only)

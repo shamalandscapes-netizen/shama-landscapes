@@ -23,7 +23,7 @@ export const metadata = {
   authors: [{ name: "Shama Landscape Architects" }],
   creator: "Shama Landscape Architects",
   publisher: "Shama Landscape Architects",
-  metadataBase: new URL("https://shamalandscapes.com"),
+  metadataBase: new URL("https://shamalandscapes.co.ke"),
   alternates: {
     canonical: "/about",
   },
@@ -73,8 +73,8 @@ const structuredData = {
   "@type": "Organization",
   name: "Shama Landscape Architects Limited",
   alternateName: "Shama Landscapes",
-  url: "https://shamalandscapes.com/about",
-  logo: "https://shamalandscapes.com/logo.png",
+  url: "https://shamalandscapes.co.ke/about",
+  logo: "https://shamalandscapes.co.ke/logo.png",
   founder: {
     "@type": "Person",
     name: "John Shamala Mulievi",

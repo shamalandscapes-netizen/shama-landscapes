@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl: 'https://shamalandscapes.com',
+  siteUrl: 'https://shamalandscapes.co.ke',
   generateRobotsTxt: true,
   sitemapSize: 5000,
   outDir: './public',
