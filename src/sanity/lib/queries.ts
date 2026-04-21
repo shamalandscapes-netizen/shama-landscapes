@@ -1,67 +1,216 @@
 import { groq } from 'next-sanity'
 
-// Blog Listing Queries
-export const featuredPostQuery = groq`
-  *[_type == "post" && featured == true] | order(publishedAt desc)[0]{
-    _id,
-    title,
-    slug,
-    excerpt,
-    mainImage,
-    publishedAt,
-    readTime,
-    author->{name, image},
-    categories[]->{title, slug}
-  }
-`
-
-export const allPostsQuery = groq`
-  *[_type == "post"] | order(publishedAt desc){
-    _id,
-    title,
-    slug,
-    excerpt,
-    mainImage,
-    publishedAt,
-    readTime,
-    author->{name, image},
-    categories[]->{title, slug}
-  }
-`
-
+/* ----------------------------------------
+   ✅ CATEGORIES
+---------------------------------------- */
 export const categoriesQuery = groq`
-  *[_type == "category"] | order(title asc){
+  *[_type == "category"] | order(order asc) {
     _id,
     title,
-    slug
+    slug,
+    description,
+    color,
+    featured
   }
 `
 
-// Blog Post Detail Queries
-export const postQuery = groq`
-  *[_type == "post" && slug.current == $slug][0]{
+/* ----------------------------------------
+   ✅ ALL POSTS (MAIN BLOG FEED)
+---------------------------------------- */
+export const allPostsQuery = groq`
+  *[_type == "post" && (!defined(publishedAt) || publishedAt <= now())]
+  | order(priority desc, publishedAt desc) {
+    _id,
+    title,
+    slug,
+    excerpt,
+    mainImage {
+      asset-> {
+        _id,
+        url,
+        metadata {
+          dimensions,
+          lqip
+        }
+      },
+      alt
+    },
+    publishedAt,
+    readTime,
+    "categories": categories[]-> {
+      _id,
+      title,
+      slug,
+      color
+    },
+    author-> {
+      name,
+      slug,
+      image {
+        asset-> {
+          url
+        }
+      }
+    },
+    isCommunitySubmission
+  }
+`
+
+/* ----------------------------------------
+   ✅ FEATURED POSTS (HERO SECTION)
+---------------------------------------- */
+export const featuredPostsQuery = groq`
+  *[_type == "post" && featured == true && (!defined(publishedAt) || publishedAt <= now())]
+  | order(priority desc, publishedAt desc)[0...5] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    mainImage {
+      asset-> {
+        _id,
+        url,
+        metadata {
+          dimensions,
+          lqip
+        }
+      },
+      alt
+    },
+    publishedAt,
+    readTime,
+    "categories": categories[]-> {
+      _id,
+      title,
+      slug,
+      color
+    },
+    author-> {
+      name,
+      slug,
+      image {
+        asset-> {
+          url
+        }
+      }
+    },
+    isCommunitySubmission
+  }
+`
+
+/* ----------------------------------------
+   ✅ POSTS BY CATEGORY
+---------------------------------------- */
+export const postsByCategoryQuery = groq`
+  *[_type == "post"
+    && (!defined(publishedAt) || publishedAt <= now())
+    && $categoryId in categories[]._ref
+  ]
+  | order(priority desc, publishedAt desc)[$start...$end] {
+    _id,
+    title,
+    slug,
+    excerpt,
+    mainImage {
+      asset-> {
+        _id,
+        url,
+        metadata {
+          dimensions,
+          lqip
+        }
+      },
+      alt
+    },
+    publishedAt,
+    readTime,
+    "categories": categories[]-> {
+      _id,
+      title,
+      slug,
+      color
+    },
+    author-> {
+      name,
+      slug,
+      image {
+        asset-> {
+          url
+        }
+      }
+    },
+    tags,
+    isCommunitySubmission
+  }
+`
+
+/* ----------------------------------------
+   ✅ SINGLE POST (FIXED - THIS WAS MISSING)
+---------------------------------------- */
+export const postBySlugQuery = groq`
+  *[_type == "post" && slug.current == $slug && (!defined(publishedAt) || publishedAt <= now())][0] {
     _id,
     title,
     slug,
     excerpt,
     body,
-    mainImage,
+    mainImage {
+      asset-> {
+        _id,
+        url,
+        metadata {
+          dimensions,
+          lqip
+        }
+      },
+      alt
+    },
     publishedAt,
     readTime,
-    author->{name, image},
-    categories[]->{_id, title, slug},
-    midArticleCTA{enabled, text, link},
-    endCTA{enabled, text, link}
-  }
-`
+    tags,
+    isCommunitySubmission,
 
-// FIXED: Handle case when category is null/undefined
-export const relatedPostsQuery = groq`
-  *[_type == "post" && defined(categories) && categories[0]._ref == $category && _id != $currentId] | order(publishedAt desc)[0...3]{
-    _id,
-    title,
-    slug,
-    mainImage,
-    readTime
+    "categories": categories[]-> {
+      _id,
+      title,
+      slug,
+      description,
+      color
+    },
+
+    author-> {
+      name,
+      slug,
+      bio,
+      image {
+        asset-> {
+          url
+        }
+      }
+    },
+
+    seo,
+
+    "relatedPosts": *[_type == "post"
+      && _id != ^._id
+      && (!defined(publishedAt) || publishedAt <= now())
+    ]
+    | order(publishedAt desc)[0...3] {
+      _id,
+      title,
+      slug,
+      excerpt,
+      mainImage {
+        asset-> {
+          url,
+          metadata {
+            lqip
+          }
+        },
+        alt
+      },
+      publishedAt,
+      readTime
+    }
   }
 `

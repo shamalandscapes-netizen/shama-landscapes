@@ -1,17 +1,16 @@
-import {DocumentTextIcon} from '@sanity/icons'
-import {defineArrayMember, defineField, defineType} from 'sanity'
+// sanity/schemaTypes/postType.ts
+import { defineField, defineType } from 'sanity'
 
 export const postType = defineType({
   name: 'post',
-  title: 'Post',
+  title: 'Blog Post',
   type: 'document',
-  icon: DocumentTextIcon,
   fields: [
     defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().max(70).warning('Long titles may be truncated in search results'),
     }),
     defineField({
       name: 'slug',
@@ -27,7 +26,7 @@ export const postType = defineType({
       name: 'author',
       title: 'Author',
       type: 'reference',
-      to: {type: 'author'},
+      to: { type: 'author' },
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -40,17 +39,29 @@ export const postType = defineType({
       fields: [
         defineField({
           name: 'alt',
+          title: 'Alt Text',
           type: 'string',
-          title: 'Alternative Text',
           description: 'Important for SEO and accessibility',
-        })
+          validation: (Rule) => Rule.required(),
+        }),
       ],
     }),
     defineField({
       name: 'categories',
       title: 'Categories',
       type: 'array',
-      of: [defineArrayMember({type: 'reference', to: {type: 'category'}})],
+      of: [{ type: 'reference', to: { type: 'category' } }],
+      validation: (Rule) => Rule.required().min(1),
+    }),
+    defineField({
+      name: 'tags',
+      title: 'Tags',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        layout: 'tags',
+      },
+      description: 'For SEO long-tail keywords (e.g., "drought-resistant plants", "Nairobi gardens")',
     }),
     defineField({
       name: 'publishedAt',
@@ -64,21 +75,21 @@ export const postType = defineType({
       title: 'Excerpt',
       type: 'text',
       rows: 3,
-      description: 'Brief summary for blog cards and SEO (150-160 characters recommended)',
-      validation: (Rule) => Rule.max(300),
+      description: 'Auto-generates meta description if SEO description is empty',
+      validation: (Rule) => Rule.required().max(300),
     }),
     defineField({
       name: 'featured',
       title: 'Featured Post',
       type: 'boolean',
-      description: 'Mark as featured to appear in hero section',
+      description: 'Include in hero rotation',
       initialValue: false,
     }),
     defineField({
       name: 'priority',
-      title: 'Priority Order',
+      title: 'Priority',
       type: 'number',
-      description: 'Lower numbers appear first (0-100)',
+      description: 'Higher numbers show first (0-100)',
       initialValue: 50,
       validation: (Rule) => Rule.min(0).max(100),
     }),
@@ -86,72 +97,20 @@ export const postType = defineType({
       name: 'readTime',
       title: 'Read Time (minutes)',
       type: 'number',
-      description: 'Estimated read time in minutes (auto-calculated if empty)',
+      description: 'Auto-calculated if left empty',
+    }),
+    defineField({
+      name: 'isCommunitySubmission',
+      title: 'Community Submission',
+      type: 'boolean',
+      description: 'Submitted via "Rooted by Shama" form',
+      initialValue: false,
+      readOnly: true,
     }),
     defineField({
       name: 'body',
-      title: 'Body Content',
+      title: 'Body',
       type: 'blockContent',
-    }),
-    defineField({
-      name: 'midArticleCTA',
-      title: 'Mid-Article CTA',
-      type: 'object',
-      description: 'Call-to-action inserted mid-article',
-      fields: [
-        defineField({
-          name: 'text',
-          title: 'CTA Text',
-          type: 'string',
-          initialValue: 'Thinking of creating a similar space?',
-        }),
-        defineField({
-          name: 'link',
-          title: 'CTA Link',
-          type: 'string',
-          initialValue: '/contact',
-        }),
-        defineField({
-          name: 'enabled',
-          title: 'Enable CTA',
-          type: 'boolean',
-          initialValue: true,
-        }),
-      ],
-    }),
-    defineField({
-      name: 'endCTA',
-      title: 'End Article CTA',
-      type: 'object',
-      description: 'Call-to-action at end of article',
-      fields: [
-        defineField({
-          name: 'text',
-          title: 'CTA Text',
-          type: 'string',
-          initialValue: "Let's design your space",
-        }),
-        defineField({
-          name: 'link',
-          title: 'CTA Link',
-          type: 'string',
-          initialValue: '/contact',
-        }),
-        defineField({
-          name: 'enabled',
-          title: 'Enable CTA',
-          type: 'boolean',
-          initialValue: true,
-        }),
-      ],
-    }),
-    defineField({
-      name: 'relatedPosts',
-      title: 'Related Posts',
-      type: 'array',
-      description: 'Manually select related posts (auto-selected by category if empty)',
-      of: [defineArrayMember({type: 'reference', to: {type: 'post'}})],
-      validation: (Rule) => Rule.max(4),
     }),
     defineField({
       name: 'seo',
@@ -162,47 +121,43 @@ export const postType = defineType({
           name: 'metaTitle',
           title: 'Meta Title',
           type: 'string',
-          description: 'Override default title for SEO',
+          description: 'Overrides default title (50-60 chars)',
+          validation: (Rule) => Rule.max(60).warning('Keep under 60 characters'),
         }),
         defineField({
           name: 'metaDescription',
           title: 'Meta Description',
           type: 'text',
           rows: 2,
-          description: 'Override default excerpt for SEO',
+          description: 'Overrides excerpt (150-160 chars)',
+          validation: (Rule) => Rule.max(160).warning('Keep under 160 characters'),
+        }),
+        defineField({
+          name: 'canonicalUrl',
+          title: 'Canonical URL',
+          type: 'url',
+          description: 'Only if this content exists elsewhere',
+        }),
+        defineField({
+          name: 'noIndex',
+          title: 'No Index',
+          type: 'boolean',
+          description: 'Prevent search engines from indexing',
+          initialValue: false,
         }),
       ],
     }),
   ],
-  preview: {
-    select: {
-      title: 'title',
-      author: 'author.name',
-      media: 'mainImage',
-      featured: 'featured',
-      priority: 'priority',
-    },
-    prepare(selection) {
-      const {author, featured, priority} = selection
-      return {
-        ...selection,
-        subtitle: `${featured ? '★ FEATURED • ' : ''}Priority: ${priority}${author ? ' • by ' + author : ''}`,
-      }
-    },
-  },
   orderings: [
     {
-      title: 'Priority, New',
-      name: 'priorityDesc',
-      by: [
-        {field: 'priority', direction: 'asc'},
-        {field: 'publishedAt', direction: 'desc'},
-      ],
+      title: 'Published Date, New',
+      name: 'publishedAtDesc',
+      by: [{ field: 'publishedAt', direction: 'desc' }],
     },
     {
-      title: 'Published, New',
-      name: 'publishedDesc',
-      by: [{field: 'publishedAt', direction: 'desc'}],
+      title: 'Priority',
+      name: 'priorityDesc',
+      by: [{ field: 'priority', direction: 'desc' }],
     },
   ],
 })
