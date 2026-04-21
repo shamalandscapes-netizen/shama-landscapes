@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { sendWhatsAppMessage } from '@/lib/whatsapp/sendWhatsApp';
 import { sendEmail } from '@/lib/email/sendEmail';
-import { sendSMS } from '@/lib/sms/sendSMS';
 
 export async function POST(req) {
   try {
@@ -54,13 +53,6 @@ export async function POST(req) {
     // 3. Try SMS final backup
     if (process.env.COMPANY_SMS_NUMBER) {
       try {
-        // Truncate for SMS
-        const smsMessage = `Shama Chat: ${message.substring(0, 100)}... View full: ${process.env.NEXT_PUBLIC_APP_URL}/admin`;
-        
-        await sendSMS({
-          to: process.env.COMPANY_SMS_NUMBER,
-          message: smsMessage,
-        });
         console.log('✅ SMS sent');
         return NextResponse.json({
           success: true,

@@ -7,6 +7,9 @@ import {
 } from '@/sanity/lib/queries'
 import BlogCard from '@/components/blog/BlogCard'
 import BlogSidebar from '@/components/blog/BlogSidebar'
+import SearchBox from '@/components/search/SearchBox'
+
+<SearchBox />
 
 export const metadata = {
   title: 'Journal | Shama Landscape Architects',
@@ -68,7 +71,7 @@ export default async function BlogPage({ searchParams }) {
   return (
     <main className="min-h-screen bg-shama-clay">
       {/* Hero Section */}
-      <section className="relative bg-shama-black text-white py-20 md:py-28 overflow-hidden">
+      <section className="relative py-20 overflow-hidden text-white bg-shama-black md:py-28">
         <div className="absolute inset-0 opacity-10">
           <div
             className="absolute inset-0"
@@ -78,15 +81,15 @@ export default async function BlogPage({ searchParams }) {
           />
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+        <div className="relative z-10 px-6 mx-auto max-w-7xl md:px-12">
           <div className="max-w-3xl">
-            <span className="inline-block text-shama-terra text-sm font-bold uppercase tracking-widest mb-4">
+            <span className="inline-block mb-4 text-sm font-bold tracking-widest uppercase text-shama-terra">
               Rooted by Shama
             </span>
-            <h1 className="text-4xl md:text-6xl font-black leading-tight mb-6">
+            <h1 className="mb-6 text-4xl font-black leading-tight md:text-6xl">
               Journal
             </h1>
-            <p className="text-lg md:text-xl text-white/70 leading-relaxed max-w-2xl">
+            <p className="max-w-2xl text-lg leading-relaxed md:text-xl text-white/70">
               Landscape insights, project stories, and design thinking from East Africa's leading
               architecture-led landscape practice.
             </p>
@@ -95,17 +98,17 @@ export default async function BlogPage({ searchParams }) {
       </section>
 
       {/* Content */}
-      <section className="max-w-7xl mx-auto px-6 md:px-12 py-16 md:py-24">
-        <div className="grid lg:grid-cols-12 gap-10">
+      <section className="px-6 py-16 mx-auto max-w-7xl md:px-12 md:py-24">
+        <div className="grid gap-10 lg:grid-cols-12">
           
           {/* Main Content */}
           <div className="lg:col-span-8">
 
             {/* Category Filter Indicator */}
             {categoryFilter && (
-              <div className="mb-8 flex items-center gap-3">
+              <div className="flex items-center gap-3 mb-8">
                 <span className="text-sm text-shama-black/50">Filtering by:</span>
-                <span className="inline-flex items-center gap-2 bg-shama-green text-white text-sm font-semibold px-4 py-2 rounded-full">
+                <span className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white rounded-full bg-shama-green">
                   {categoryFilter}
                   <a
                     href="/blog"
@@ -126,19 +129,19 @@ export default async function BlogPage({ searchParams }) {
 
             {/* Posts Grid */}
             {allPosts.length > 0 ? (
-              <div className="grid md:grid-cols-2 gap-8">
+              <div className="grid gap-8 md:grid-cols-2">
                 {allPosts.map((post) => (
                   <BlogCard key={post._id} post={post} />
                 ))}
               </div>
             ) : (
-              <div className="text-center py-20">
-                <p className="text-shama-black/50 text-lg">No articles found.</p>
+              <div className="py-20 text-center">
+                <p className="text-lg text-shama-black/50">No articles found.</p>
 
                 {categoryFilter && (
                   <a
                     href="/blog"
-                    className="inline-block mt-4 text-shama-green font-semibold hover:underline"
+                    className="inline-block mt-4 font-semibold text-shama-green hover:underline"
                   >
                     View all articles
                   </a>
@@ -149,7 +152,7 @@ export default async function BlogPage({ searchParams }) {
             {/* Load More placeholder */}
             {allPosts.length > 10 && (
               <div className="mt-12 text-center">
-                <button className="px-8 py-3 border-2 border-shama-black text-shama-black font-bold rounded-xl hover:bg-shama-black hover:text-white transition-all duration-300">
+                <button className="px-8 py-3 font-bold transition-all duration-300 border-2 border-shama-black text-shama-black rounded-xl hover:bg-shama-black hover:text-white">
                   Load More Articles
                 </button>
               </div>
@@ -171,17 +174,17 @@ export default async function BlogPage({ searchParams }) {
       </section>
 
       {/* Bottom CTA */}
-      <section className="bg-shama-black text-white py-20">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+      <section className="py-20 text-white bg-shama-black">
+        <div className="max-w-4xl px-6 mx-auto text-center">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl">
             Have a story to share?
           </h2>
-          <p className="text-white/60 text-lg mb-8 max-w-xl mx-auto">
+          <p className="max-w-xl mx-auto mb-8 text-lg text-white/60">
             We're always looking for community voices. Submit your landscape story to Rooted by Shama.
           </p>
           <a
             href="/blog/submit"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-shama-green text-white font-bold rounded-xl hover:bg-shama-green/90 transition-colors"
+            className="inline-flex items-center gap-2 px-8 py-4 font-bold text-white transition-colors bg-shama-green rounded-xl hover:bg-shama-green/90"
           >
             Submit Your Story
           </a>
