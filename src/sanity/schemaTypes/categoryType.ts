@@ -5,12 +5,13 @@ export const categoryType = defineType({
   name: 'category',
   title: 'Category',
   type: 'document',
+
   fields: [
     defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) => Rule.required().min(2).max(50),
     }),
 
     defineField({
@@ -31,20 +32,22 @@ export const categoryType = defineType({
       rows: 3,
       description: 'Used for SEO meta description on category pages',
       validation: (Rule) =>
-        Rule.max(160).warning('Should be under 160 characters for SEO'),
+        Rule.max(160).warning('Keep it under 160 characters for SEO'),
     }),
 
-    // ✅ FIXED: replace color picker with string (safe & production-ready)
+    // ✅ Safe replacement for color-input plugin (no dependencies)
     defineField({
       name: 'color',
       title: 'Accent Color',
       type: 'string',
       description: 'Hex color (e.g. #0F7F40)',
+
       validation: (Rule) =>
-        Rule.regex(/^#([0-9A-Fa-f]{3}){1,2}$/, {
-          name: 'hex color',
-          invert: false,
-        }).warning('Must be a valid hex color like #0F7F40'),
+        Rule.required()
+          .regex(/^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/, {
+            name: 'hex color',
+          })
+          .warning('Use a valid hex color like #0F7F40 or #FFF'),
     }),
 
     defineField({
@@ -60,6 +63,14 @@ export const categoryType = defineType({
       title: 'Display Order',
       type: 'number',
       initialValue: 0,
+      validation: (Rule) => Rule.min(0),
     }),
   ],
+
+  preview: {
+    select: {
+      title: 'title',
+      subtitle: 'description',
+    },
+  },
 })

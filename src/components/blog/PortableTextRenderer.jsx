@@ -11,20 +11,40 @@ const components = {
       if (!value?.asset) return null
 
       const imageUrl = urlFor(value)
-        .width(1200)
-        .fit('max')
+        .width(1400)
         .auto('format')
+        .fit('max')
         .url()
 
+      // ✅ IMAGE LAYOUT SYSTEM (from Sanity field)
+      const layout = value.layout || 'normal' 
+      // options: full | wide | normal | small
+
+      const layoutStyles = {
+        full: 'w-full',
+        wide: 'w-full md:w-[120%] md:-ml-[10%]',
+        normal: 'w-full',
+        small: 'w-full md:w-2/3 mx-auto',
+      }
+
+      const heightStyles = {
+        full: 'h-[420px] md:h-[600px]',
+        wide: 'h-[380px] md:h-[520px]',
+        normal: 'h-64 md:h-96',
+        small: 'h-60 md:h-80',
+      }
+
       return (
-        <figure className="my-8">
-          <div className="relative w-full h-64 md:h-96 rounded-2xl overflow-hidden">
+        <figure className={`my-10 ${layoutStyles[layout]}`}>
+          <div
+            className={`relative rounded-2xl overflow-hidden ${heightStyles[layout]}`}
+          >
             <Image
               src={imageUrl}
               alt={value.alt || 'Blog image'}
               fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 800px"
+              className="object-cover hover:scale-[1.02] transition-transform duration-700"
+              sizes="(max-width: 768px) 100vw, 1100px"
             />
           </div>
 
@@ -40,10 +60,8 @@ const components = {
 
   marks: {
     link: ({ children, value }) => {
-      const rel =
-        !value?.href?.startsWith('/') ? 'noreferrer noopener' : undefined
-      const target =
-        !value?.href?.startsWith('/') ? '_blank' : undefined
+      const rel = !value?.href?.startsWith('/') ? 'noreferrer noopener' : undefined
+      const target = !value?.href?.startsWith('/') ? '_blank' : undefined
 
       return (
         <Link
@@ -56,9 +74,11 @@ const components = {
         </Link>
       )
     },
+
     strong: ({ children }) => (
       <strong className="font-bold text-shama-black">{children}</strong>
     ),
+
     em: ({ children }) => (
       <em className="italic text-shama-black/80">{children}</em>
     ),
@@ -113,17 +133,12 @@ const components = {
   },
 
   listItem: {
-    bullet: ({ children }) => (
-      <li className="leading-relaxed">{children}</li>
-    ),
-    number: ({ children }) => (
-      <li className="leading-relaxed">{children}</li>
-    ),
+    bullet: ({ children }) => <li className="leading-relaxed">{children}</li>,
+    number: ({ children }) => <li className="leading-relaxed">{children}</li>,
   },
 }
 
 export default function PortableTextRenderer({ value }) {
   if (!value) return null
-
   return <PortableText value={value} components={components} />
 }
